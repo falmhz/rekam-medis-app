@@ -11,6 +11,16 @@ export const CLINIC_INFO = {
   logoUrl: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=100&auto=format&fit=crop&q=80"
 };
 
+export const ADMIN_USER = {
+  id: "admin-1",
+  name: "Admin Klinik",
+  email: "admin@sehatmedika.com",
+  password: "admin123",
+  role: "admin",
+  spec: "Administrator Klinik",
+  sip: "ADM-2024-001"
+};
+
 export const CLINIC_POLIS = [
   { id: "poli-umum", name: "Poli Umum", code: "U", color: "blue", icon: "Stethoscope" },
   { id: "poli-gigi", name: "Poli Gigi", code: "G", color: "amber", icon: "Smile" },

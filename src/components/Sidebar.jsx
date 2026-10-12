@@ -6,10 +6,9 @@ import {
   ListOrdered, 
   Pill, 
   Calculator, 
-  PlusCircle, 
   UserPlus, 
   Stethoscope, 
-  HeartPulse, 
+  ShieldCheck,
   X,
   Building
 } from 'lucide-react';
@@ -24,9 +23,14 @@ export default function Sidebar({
   onNewPatient, 
   onNewRecord, 
   isMobileOpen, 
-  setIsMobileOpen 
+  setIsMobileOpen,
+  currentUser
 }) {
-  const menuItems = [
+  const isAdmin = currentUser?.role === 'admin';
+  const isDoctor = currentUser?.role === 'doctor';
+
+  // Menu yang tersedia untuk semua (admin & dokter)
+  const commonMenuItems = [
     {
       id: 'dashboard',
       label: 'Dashboard',
@@ -50,6 +54,10 @@ export default function Sidebar({
       badge: recordCount,
       badgeColor: 'bg-teal-100 text-teal-800'
     },
+  ];
+
+  // Menu eksklusif Admin
+  const adminOnlyMenuItems = [
     {
       id: 'patients',
       label: 'Data Pasien',
@@ -65,6 +73,10 @@ export default function Sidebar({
       icon: Pill,
       badge: null
     },
+  ];
+
+  // Menu tools tersedia untuk semua
+  const toolMenuItems = [
     {
       id: 'calculator',
       label: 'Kalkulator Medis',
@@ -80,6 +92,39 @@ export default function Sidebar({
     if (setIsMobileOpen) {
       setIsMobileOpen(false);
     }
+  };
+
+  const renderMenuButton = (item) => {
+    const Icon = item.icon;
+    const isActive = currentTab === item.id;
+    return (
+      <button
+        key={item.id}
+        onClick={() => handleSelect(item.id)}
+        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left transition text-xs font-medium cursor-pointer ${
+          isActive
+            ? 'bg-teal-50 text-teal-800 font-semibold border border-teal-200/80 shadow-2xs'
+            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div className={`p-1.5 rounded-lg ${isActive ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+            <Icon className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="leading-tight">{item.label}</div>
+            <div className="text-[10px] text-slate-400 font-normal leading-tight mt-0.5">
+              {item.description}
+            </div>
+          </div>
+        </div>
+        {item.badge !== null && item.badge !== undefined && (
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${item.badgeColor || 'bg-slate-100 text-slate-600'}`}>
+            {item.badge}
+          </span>
+        )}
+      </button>
+    );
   };
 
   return (
@@ -115,6 +160,7 @@ export default function Sidebar({
 
           {/* Action Quick Launch Buttons */}
           <div className="space-y-2 mb-6">
+            {/* Tombol SOAP — tersedia untuk semua */}
             <button
               onClick={() => {
                 onNewRecord();
@@ -126,57 +172,60 @@ export default function Sidebar({
               <span>+ Periksa Pasien (SOAP)</span>
             </button>
 
-            <button
-              onClick={() => {
-                onNewPatient();
-                if (setIsMobileOpen) setIsMobileOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition cursor-pointer"
-            >
-              <UserPlus className="w-3.5 h-3.5 text-slate-500" />
-              <span>+ Daftar Pasien Baru</span>
-            </button>
+            {/* Tombol Daftar Pasien — hanya Admin */}
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  onNewPatient();
+                  if (setIsMobileOpen) setIsMobileOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition cursor-pointer"
+              >
+                <UserPlus className="w-3.5 h-3.5 text-slate-500" />
+                <span>+ Daftar Pasien Baru</span>
+              </button>
+            )}
           </div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links — Menu Umum (Admin & Dokter) */}
           <div className="space-y-1">
             <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Menu Utama
             </div>
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => handleSelect(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left transition text-xs font-medium cursor-pointer ${
-                    isActive
-                      ? 'bg-teal-50 text-teal-800 font-semibold border border-teal-200/80 shadow-2xs'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-1.5 rounded-lg ${isActive ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="leading-tight">{item.label}</div>
-                      <div className="text-[10px] text-slate-400 font-normal leading-tight mt-0.5">
-                        {item.description}
-                      </div>
-                    </div>
-                  </div>
-
-                  {item.badge !== null && item.badge !== undefined && (
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${item.badgeColor || 'bg-slate-100 text-slate-600'}`}>
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {commonMenuItems.map(renderMenuButton)}
           </div>
+
+          {/* Navigation Links — Menu Eksklusif Admin */}
+          {isAdmin && (
+            <div className="space-y-1 mt-4">
+              <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3 h-3" />
+                Manajemen (Admin)
+              </div>
+              {adminOnlyMenuItems.map(renderMenuButton)}
+            </div>
+          )}
+
+          {/* Navigation Links — Tools */}
+          <div className="space-y-1 mt-4">
+            <div className="px-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Alat Bantu
+            </div>
+            {toolMenuItems.map(renderMenuButton)}
+          </div>
+
+          {/* Info role dokter */}
+          {isDoctor && (
+            <div className="mt-4 p-3 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-700">
+              <div className="font-semibold mb-0.5 flex items-center gap-1.5">
+                <Stethoscope className="w-3 h-3" />
+                Mode Dokter
+              </div>
+              <div className="text-blue-600 leading-snug">
+                Akses Data Pasien & Farmasi hanya tersedia untuk Admin.
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer info box */}

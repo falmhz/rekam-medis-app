@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   X
 } from 'lucide-react';
-import { CLINIC_INFO, DOCTORS } from '../../data/mockData';
+import { CLINIC_INFO, DOCTORS, ADMIN_USER } from '../../data/mockData';
 
 export default function LoginPage({ onLogin, onBackToHome, patients, onRegisterPatient, showToast }) {
   const [identifier, setIdentifier] = useState('');
@@ -48,15 +48,32 @@ export default function LoginPage({ onLogin, onBackToHome, patients, onRegisterP
     const input = identifier.trim().toLowerCase();
     const inputPass = password.trim();
 
-    // 1. Cek Akun Dokter / Tenaga Medis
+    // 1. Cek Akun Admin
+    if (input === ADMIN_USER.email.toLowerCase() || input === 'admin') {
+      if (inputPass === ADMIN_USER.password || inputPass === 'admin123') {
+        onLogin({
+          role: 'admin',
+          id: ADMIN_USER.id,
+          name: ADMIN_USER.name,
+          spec: ADMIN_USER.spec,
+          sip: ADMIN_USER.sip
+        });
+        return;
+      } else {
+        setErrorMessage('Kata sandi admin yang Anda masukkan salah.');
+        return;
+      }
+    }
+
+    // 2. Cek Akun Dokter / Tenaga Medis
     const matchedDoctor = DOCTORS.find(d => 
       d.email.toLowerCase() === input || 
       d.id.toLowerCase() === input ||
-      (input === 'dokter' || input === 'admin' || input.includes('dokter@'))
+      input.includes('dokter@')
     );
 
     if (matchedDoctor) {
-      if (inputPass === matchedDoctor.password || inputPass === 'dokter123' || inputPass === '123456' || inputPass === 'admin123') {
+      if (inputPass === matchedDoctor.password || inputPass === 'dokter123' || inputPass === '123456') {
         onLogin({
           role: 'doctor',
           id: matchedDoctor.id,
@@ -379,12 +396,23 @@ export default function LoginPage({ onLogin, onBackToHome, patients, onRegisterP
 
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                Koneksi Terenkripsi SSL 256-bit
-              </span>
-              <span>{CLINIC_INFO.name}</span>
+            <div className="pt-6 mt-6 border-t border-slate-100">
+              {/* Info Kredensial Demo */}
+              <div className="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500 space-y-1">
+                <div className="font-bold text-slate-600 mb-1.5">Akun Demo:</div>
+                <div className="grid grid-cols-1 gap-1">
+                  <div className="flex justify-between"><span className="font-semibold text-rose-600">Admin:</span><span>admin@sehatmedika.com / admin123</span></div>
+                  <div className="flex justify-between"><span className="font-semibold text-teal-700">Dokter:</span><span>dokter@sehatmedika.com / dokter123</span></div>
+                  <div className="flex justify-between"><span className="font-semibold text-blue-600">Pasien:</span><span>ahmad@gmail.com / pasien123</span></div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  Koneksi Terenkripsi SSL 256-bit
+                </span>
+                <span>{CLINIC_INFO.name}</span>
+              </div>
             </div>
 
           </div>

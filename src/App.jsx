@@ -61,7 +61,8 @@ export default function App() {
 
   const handleLogin = (user) => {
     setCurrentUser(user);
-    showToast(`Selamat datang, ${user.role === 'doctor' ? user.name : user.patientData.name}!`, 'success');
+    const displayName = user.role === 'patient' ? user.patientData.name : user.name;
+    showToast(`Selamat datang, ${displayName}!`, 'success');
   };
 
   const handleLogout = () => {
@@ -75,6 +76,16 @@ export default function App() {
 
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  // Guard: dokter hanya boleh akses tab tertentu
+  const DOCTOR_ALLOWED_TABS = ['dashboard', 'queues', 'records', 'calculator'];
+  const handleSetCurrentTab = (tab) => {
+    if (currentUser?.role === 'doctor' && !DOCTOR_ALLOWED_TABS.includes(tab)) {
+      showToast('Akses ditolak. Fitur ini hanya tersedia untuk Admin.', 'error');
+      return;
+    }
+    setCurrentTab(tab);
+  };
 
   // Data Collections
   const [patients, setPatients] = useState(() => getPatients());
@@ -327,7 +338,7 @@ export default function App() {
     );
   }
 
-  // 3. IF LOGGED IN AS DOCTOR / ADMIN: SHOW FULL CLINICAL EMR SYSTEM
+  // 3. IF LOGGED IN AS DOCTOR OR ADMIN: SHOW FULL CLINICAL EMR SYSTEM
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
       
@@ -346,7 +357,7 @@ export default function App() {
         {/* Navigation Sidebar */}
         <Sidebar
           currentTab={currentTab}
-          setCurrentTab={setCurrentTab}
+          setCurrentTab={handleSetCurrentTab}
           patientCount={patients.length}
           recordCount={records.length}
           queueWaitingCount={waitingQueueCount}
@@ -354,6 +365,7 @@ export default function App() {
           onNewRecord={() => handleOpenNewSoap()}
           isMobileOpen={isMobileOpen}
           setIsMobileOpen={setIsMobileOpen}
+          currentUser={currentUser}
         />
 
         {/* Dynamic Main Page Content */}
@@ -364,7 +376,7 @@ export default function App() {
               records={records}
               queues={queues}
               medicines={medicines}
-              onNavigateTab={(tab) => setCurrentTab(tab)}
+              onNavigateTab={handleSetCurrentTab}
               onStartExam={handleStartExamFromQueue}
               onNewPatient={handleOpenAddPatient}
               onNewRecord={() => handleOpenNewSoap()}
@@ -392,7 +404,8 @@ export default function App() {
             />
           )}
 
-          {currentTab === 'patients' && (
+          {/* Tab patients & pharmacy — hanya untuk admin */}
+          {currentTab === 'patients' && currentUser.role === 'admin' && (
             <PatientListView
               patients={patients}
               onAddPatient={handleOpenAddPatient}
@@ -404,13 +417,34 @@ export default function App() {
             />
           )}
 
-          {currentTab === 'pharmacy' && (
+          {currentTab === 'pharmacy' && currentUser.role === 'admin' && (
             <PharmacyView
               medicines={medicines}
               onAddMedicine={handleOpenAddMedicine}
               onEditMedicine={handleOpenEditMedicine}
               onDeleteMedicine={handleDeleteMedicine}
             />
+          )}
+
+          {/* Fallback jika dokter mencoba akses tab yang tidak diizinkan */}
+          {(currentTab === 'patients' || currentTab === 'pharmacy') && currentUser.role === 'doctor' && (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+              <div className="w-16 h-16 rounded-2xl bg-rose-100 flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m2-5V9m0 0V7m0 2h2M12 9H10M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-slate-800 mb-1">Akses Ditolak</h2>
+              <p className="text-sm text-slate-500 max-w-sm">
+                Fitur ini hanya tersedia untuk <span className="font-semibold text-rose-600">Admin Klinik</span>. Silakan hubungi admin untuk informasi lebih lanjut.
+              </p>
+              <button
+                onClick={() => setCurrentTab('dashboard')}
+                className="mt-4 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-xl transition cursor-pointer"
+              >
+                Kembali ke Dashboard
+              </button>
+            </div>
           )}
 
           {currentTab === 'calculator' && (
