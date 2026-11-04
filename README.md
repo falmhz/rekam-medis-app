@@ -1,4 +1,4 @@
-# 🏥 Sistem Rekam Medis Klinik - Medika Sehat
+# Sistem Rekam Medis Klinik - Medika Sehat
 
 **Sistem Informasi Rekam Medis Elektronik (EMR) untuk Manajemen Klinik Modern**
 
@@ -6,36 +6,36 @@ Aplikasi berbasis web yang dirancang untuk mengelola data pasien, kunjungan, rek
 
 ---
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-### 👥 **Manajemen Pengguna**
+### **Manajemen Pengguna**
 - Login dengan role-based access (Admin, Petugas, Dokter)
 - Manajemen user dengan sistem autentikasi bcryptjs
 - Session management dengan timeout 8 jam
 
-### 🏃 **Manajemen Pasien**
+### **Manajemen Pasien**
 - CRUD data pasien lengkap (nama, NIK, alamat, no HP, dll)
 - Nomor Rekam Medis (RM) otomatis dan unik
 - History kunjungan pasien
 
-### 📋 **Manajemen Kunjungan**
+### **Manajemen Kunjungan**
 - Pendaftaran kunjungan pasien
 - Sistem antrean (Menunggu, Diperiksa, Selesai)
 - Penugasan dokter otomatis
 - Filter berdasarkan tanggal, status, dan dokter
 
-### 🩺 **Rekam Medis**
+### **Rekam Medis**
 - Input data pemeriksaan (tekanan darah, suhu, berat badan)
 - Diagnosis dan tindakan medis
 - Catatan klinis untuk setiap kunjungan
 
-### 💊 **Manajemen Obat & Resep**
+### **Manajemen Obat & Resep**
 - Inventaris obat dengan tracking stok
 - Alert stok obat menipis (< 10 unit)
 - Pemberian resep obat per rekam medis
 - Detail aturan pakai obat
 
-### 📊 **Dashboard Statistik**
+### **Dashboard Statistik**
 - Total pasien terdaftar
 - Kunjungan hari ini
 - Antrean pasien berdasarkan status
@@ -44,7 +44,7 @@ Aplikasi berbasis web yang dirancang untuk mengelola data pasien, kunjungan, rek
 
 ---
 
-## 🛠️ Teknologi Stack
+## Teknologi Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -68,11 +68,11 @@ Aplikasi berbasis web yang dirancang untuk mengelola data pasien, kunjungan, rek
 
 ---
 
-## 📦 Instalasi & Setup
+## Instalasi & Setup
 
 ### **Prasyarat**
-- Node.js v16+ ([Download](https://nodejs.org/))
-- PostgreSQL 12+ ([Download](https://www.postgresql.org/download/))
+- Node.js v24+ ([Download](https://nodejs.org/))
+- PostgreSQL 14+ ([Download](https://www.postgresql.org/download/))
 - Git
 
 ### **1. Clone Repository**
@@ -137,7 +137,7 @@ Aplikasi akan berjalan di: **http://localhost:3000**
 
 ---
 
-## 📚 Default User Demo
+## Default User Demo
 
 Setelah setup, gunakan akun berikut untuk login:
 
@@ -147,11 +147,11 @@ Setelah setup, gunakan akun berikut untuk login:
 | Petugas | petugas1 | petugas123 |
 | Dokter | dokter1 | dokter123 |
 
-> ⚠️ **PENTING**: Ubah password ini di production!
+>  **PENTING**: Ubah password ini di production!
 
 ---
 
-## 📁 Struktur Proyek
+## Struktur Proyek
 
 ```
 rekam-medis-app/
@@ -204,7 +204,7 @@ rekam-medis-app/
 
 ---
 
-## 🚀 Penggunaan
+## Penggunaan
 
 ### **Akses Aplikasi**
 1. Buka browser: `http://localhost:3000`
@@ -283,7 +283,7 @@ id | rekam_medis_id | obat_id | jumlah | aturan_pakai
 
 ---
 
-## 🔐 Security Features
+## Security Features
 
 - ✅ Password hashing dengan bcryptjs
 - ✅ Session-based authentication
@@ -295,7 +295,7 @@ id | rekam_medis_id | obat_id | jumlah | aturan_pakai
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### **Error: "Cannot find module 'pg'"**
 Solusi:
@@ -323,7 +323,7 @@ PORT=3001
 
 ---
 
-## 📝 Scripts
+## Scripts
 
 ```bash
 # Install dependencies
@@ -344,7 +344,7 @@ npm test
 
 ---
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kami menerima kontribusi! Silakan:
 1. Fork repository
@@ -361,31 +361,14 @@ Proyek ini dilisensikan di bawah **ISC License**. Lihat file `LICENSE` untuk det
 
 ---
 
-## 📞 Kontak & Support
+## Kontak & Support
 
 - **Author**: Falmhz
 - **Repository**: https://github.com/falmhz/rekam-medis-app
 - **Issues**: Silakan buat issue di GitHub untuk melaporkan bug atau request fitur
 
----
-
-## 🎯 Roadmap Fitur Mendatang
-
-- [ ] Export data ke Excel/PDF
-- [ ] SMS notification untuk reminder kunjungan
-- [ ] Mobile app (React Native)
-- [ ] Multi-branch support
-- [ ] Advanced analytics & reporting
-- [ ] API documentation (Swagger)
-- [ ] Unit testing & CI/CD pipeline
 
 ---
-
-## 📸 Screenshots
-
-### Login Page
-![Medika Sehat Login](public/images/logo.svg)
-
 Halaman login dengan branding Medika Sehat dan logo medis modern.
 
 ---
