@@ -247,7 +247,7 @@ rekam-medis-app/
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 ### **Tabel Users**
 ```sql
