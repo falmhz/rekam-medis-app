@@ -50,7 +50,7 @@ Aplikasi berbasis web yang dirancang untuk mengelola data pasien, kunjungan, rek
 |-------|-----------|
 | **Backend** | Node.js + Express.js |
 | **Frontend** | EJS (Embedded JavaScript Templating) |
-| **Database** | PostgreSQL 12+ |
+| **Database** | PostgreSQL 14+ |
 | **Authentication** | bcryptjs, express-session |
 | **HTTP Client** | Built-in Node.js |
 
