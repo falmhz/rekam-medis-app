@@ -1,0 +1,342 @@
+<%- include('../partials/header') %>
+
+<!-- Template Tersembunyi untuk Opsi Dropdown Obat (Dipakai JavaScript Dinamis) -->
+<template id="obatOptionsTemplate">
+  <% if (obatList && obatList.length > 0) { %>
+    <% obatList.forEach(o => { %>
+      <option value="<%= o.id %>" <%= o.stok <= 0 ? 'disabled' : '' %>>
+        <%= o.nama_obat %> (Stok: <%= o.stok %> <%= o.satuan %>) <%= o.stok <= 0 ? '[HABIS]' : '' %>
+      </option>
+    <% }) %>
+  <% } %>
+</template>
+
+<!-- Header Ringkasan Pasien & Kunjungan -->
+<div class="patient-header-card">
+  <div style="flex: 1;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+      <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main);">
+        <%= kunjungan.nama_pasien %>
+      </h2>
+      <span class="badge" style="background-color: var(--primary-light); color: var(--primary-dark); font-size: 13px; font-weight: 700;">
+        <%= kunjungan.no_rm %>
+      </span>
+      <span class="badge badge-<%= kunjungan.status.toLowerCase() %>">
+        Status: <%= kunjungan.status %>
+      </span>
+    </div>
+
+    <div class="patient-info-meta">
+      <div class="meta-item">
+        <div class="meta-label">Jenis Kelamin</div>
+        <div class="meta-value"><%= kunjungan.jenis_kelamin %></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Tanggal Lahir</div>
+        <div class="meta-value">
+          <%= kunjungan.tgl_lahir instanceof Date ? kunjungan.tgl_lahir.toLocaleDateString('id-ID') : kunjungan.tgl_lahir %>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Tanggal Kunjungan</div>
+        <div class="meta-value">
+          <%= kunjungan.tanggal instanceof Date ? kunjungan.tanggal.toLocaleDateString('id-ID') : kunjungan.tanggal %>
+        </div>
+      </div>
+      <div class="meta-item" style="grid-column: 1 / -1; background-color: #fff; padding: 10px 14px; border-radius: var(--radius-sm); border-left: 3px solid var(--warning);">
+        <div class="meta-label" style="color: #b45309;">Keluhan Utama Pasien:</div>
+        <div class="meta-value" style="color: var(--text-main); font-weight: 600; margin-top: 2px;">
+          "<%= kunjungan.keluhan %>"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <a href="/pasien/<%= kunjungan.pasien_id %>" class="btn btn-outline" target="_blank" title="Buka riwayat lengkap pasien di tab baru">
+      📑 Buka Riwayat Lengkap &rarr;
+    </a>
+    <a href="/pemeriksaan" class="btn btn-outline">&larr; Kembali ke Antrean</a>
+  </div>
+</div>
+
+<!-- Riwayat Singkat 5 Kunjungan Terakhir Pasien Ini -->
+<% if (riwayatTerdahulu && riwayatTerdahulu.length > 0) { %>
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header" style="background-color: #f8fafc;">
+      <div class="card-title" style="font-size: 14px;">
+        <span>🔍 Referensi: Riwayat Diagnosis Terakhir Pasien</span>
+      </div>
+    </div>
+    <div class="card-body" style="padding: 14px 20px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <% riwayatTerdahulu.forEach(r => { %>
+          <div style="font-size: 13px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;">
+            <strong><%= r.tanggal instanceof Date ? r.tanggal.toLocaleDateString('id-ID') : r.tanggal %>:</strong>
+            <span style="color: var(--primary-dark); font-weight: 600;"><%= r.diagnosis %></span>
+            (TD: <%= r.tekanan_darah %>, Suhu: <%= r.suhu %>&deg;C) &mdash;
+            <span style="color: var(--text-muted);"><%= r.tindakan %></span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<!-- JIKA SUDAH SELESAI DIPERIKSA (READ ONLY) -->
+<% if (isReadOnly && existingRm) { %>
+  <div class="card">
+    <div class="card-header" style="background-color: var(--success-light); border-bottom-color: #a7f3d0;">
+      <div class="card-title" style="color: #065f46;">
+        <span>✅ Kunjungan Ini Telah Selesai Diperiksa</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- Vitals -->
+      <div class="vitals-grid">
+        <div class="vital-box">
+          <div class="vital-label">Tekanan Darah</div>
+          <div class="vital-val"><%= existingRm.tekanan_darah %> mmHg</div>
+        </div>
+        <div class="vital-box">
+          <div class="vital-label">Suhu Tubuh</div>
+          <div class="vital-val"><%= existingRm.suhu %> &deg;C</div>
+        </div>
+        <div class="vital-box">
+          <div class="vital-label">Berat Badan</div>
+          <div class="vital-val"><%= existingRm.berat_badan %> kg</div>
+        </div>
+      </div>
+
+      <!-- Diagnosis & Tindakan -->
+      <div class="form-row" style="margin-top: 18px;">
+        <div class="form-group">
+          <label class="form-label">Diagnosis Medis</label>
+          <div style="padding: 10px 14px; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-weight: 600;">
+            <%= existingRm.diagnosis %>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tindakan / Terapi</label>
+          <div style="padding: 10px 14px; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+            <%= existingRm.tindakan %>
+          </div>
+        </div>
+      </div>
+
+      <% if (existingRm.catatan) { %>
+        <div class="form-group">
+          <label class="form-label">Catatan Dokter</label>
+          <div style="padding: 10px 14px; background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-sm);">
+            <%= existingRm.catatan %>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Resep Obat -->
+      <div style="margin-top: 20px;">
+        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">💊 Resep Obat:</h4>
+        <% if (existingResep && existingResep.length > 0) { %>
+          <table class="prescription-table">
+            <thead>
+              <tr>
+                <th>Nama Obat</th>
+                <th style="width: 120px;" class="text-center">Jumlah</th>
+                <th>Aturan Pakai</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% existingResep.forEach(r => { %>
+                <tr>
+                  <td><strong><%= r.nama_obat %></strong></td>
+                  <td class="text-center"><%= r.jumlah %> <%= r.satuan %></td>
+                  <td><%= r.aturan_pakai %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p style="font-size: 13px; color: var(--text-muted); font-style: italic;">
+            Tidak ada resep obat pada rekam medis ini.
+          </p>
+        <% } %>
+      </div>
+
+      <div class="form-actions">
+        <a href="/pasien/<%= kunjungan.pasien_id %>" class="btn btn-primary">Lihat Profil Pasien Lengkap</a>
+        <a href="/pemeriksaan" class="btn btn-outline">Kembali ke Antrean Dokter</a>
+      </div>
+    </div>
+  </div>
+
+<!-- FORM PEMERIKSAAN DOKTER (AKTIF) -->
+<% } else { %>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <span>🩺 Formulir Pemeriksaan Medis Pasien</span>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <form action="/pemeriksaan/<%= kunjungan.kunjungan_id %>" method="POST" id="formPemeriksaan">
+        
+        <!-- 1. Tanda-Tanda Vital -->
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--primary-dark); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          1. Tanda-Tanda Vital Pasien
+        </h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tekanan_darah" class="form-label">Tekanan Darah (mmHg) <span class="required">*</span></label>
+            <input 
+              type="text" 
+              name="tekanan_darah" 
+              id="tekanan_darah" 
+              class="form-control" 
+              placeholder="Contoh: 120/80" 
+              required
+            >
+            <span class="form-help">Format: Sistol/Diastol</span>
+          </div>
+
+          <div class="form-group">
+            <label for="suhu" class="form-label">Suhu Tubuh (&deg;C) <span class="required">*</span></label>
+            <input 
+              type="number" 
+              step="0.1" 
+              min="35.0" 
+              max="43.0" 
+              name="suhu" 
+              id="suhu" 
+              class="form-control" 
+              placeholder="Contoh: 36.8" 
+              required
+            >
+            <span class="form-help">Kisaran normal: 36.5 - 37.5 &deg;C</span>
+          </div>
+
+          <div class="form-group">
+            <label for="berat_badan" class="form-label">Berat Badan (kg) <span class="required">*</span></label>
+            <input 
+              type="number" 
+              step="0.1" 
+              min="1" 
+              name="berat_badan" 
+              id="berat_badan" 
+              class="form-control" 
+              placeholder="Contoh: 65.5" 
+              required
+            >
+          </div>
+        </div>
+
+        <!-- 2. Diagnosis & Tindakan Medis -->
+        <h3 style="font-size: 15px; font-weight: 700; color: var(--primary-dark); margin-top: 16px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          2. Hasil Pemeriksaan & Diagnosis
+        </h3>
+
+        <div class="form-group">
+          <label for="diagnosis" class="form-label">Diagnosis Medis <span class="required">*</span></label>
+          <textarea 
+            name="diagnosis" 
+            id="diagnosis" 
+            class="form-control" 
+            rows="2" 
+            placeholder="Tuliskan diagnosis dokter (contoh: Faringitis Akut, Dispepsia, Hipertensi Grade 1...)" 
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="tindakan" class="form-label">Tindakan / Terapi Medis <span class="required">*</span></label>
+          <textarea 
+            name="tindakan" 
+            id="tindakan" 
+            class="form-control" 
+            rows="2" 
+            placeholder="Tuliskan tindakan medis atau edukasi yang diberikan (contoh: Istirahat tirah baring, diet rendah garam, terapi oral...)" 
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="catatan" class="form-label">Catatan Tambahan (Opsional)</label>
+          <input 
+            type="text" 
+            name="catatan" 
+            id="catatan" 
+            class="form-control" 
+            placeholder="Catatan kontrol ulang, alergi, atau pesan khusus untuk pasien..."
+          >
+        </div>
+
+        <!-- 3. Resep Obat Dinamis -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">
+          <h3 style="font-size: 15px; font-weight: 700; color: var(--primary-dark); margin: 0;">
+            3. Resep Obat Pasien (Dinamis)
+          </h3>
+          <button type="button" class="btn btn-outline btn-sm" id="btnTambahObat">
+            + Tambah Baris Obat
+          </button>
+        </div>
+
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 10px;">
+          Pilih obat, isi jumlah dan aturan pakai. Stok obat akan berkurang secara otomatis dari database saat pemeriksaan disimpan.
+        </p>
+
+        <div class="table-responsive">
+          <table class="prescription-table" id="prescriptionTable">
+            <thead>
+              <tr>
+                <th style="min-width: 240px;">Pilih Obat</th>
+                <th style="width: 110px;">Jumlah</th>
+                <th style="min-width: 200px;">Aturan Pakai</th>
+                <th style="width: 80px;" class="text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="prescriptionBody">
+              <!-- Baris Pertama Standar -->
+              <tr>
+                <td>
+                  <select name="obat_id[]" class="form-control select-obat">
+                    <option value="">-- Tidak Ada / Pilih Obat --</option>
+                    <% if (obatList && obatList.length > 0) { %>
+                      <% obatList.forEach(o => { %>
+                        <option value="<%= o.id %>" <%= o.stok <= 0 ? 'disabled' : '' %>>
+                          <%= o.nama_obat %> (Stok: <%= o.stok %> <%= o.satuan %>) <%= o.stok <= 0 ? '[HABIS]' : '' %>
+                        </option>
+                      <% }) %>
+                    <% } %>
+                  </select>
+                </td>
+                <td>
+                  <input type="number" name="jumlah[]" class="form-control input-jumlah" min="1" placeholder="Jml">
+                </td>
+                <td>
+                  <input type="text" name="aturan_pakai[]" class="form-control input-aturan" placeholder="Contoh: 3 x 1 tablet sesudah makan">
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn btn-outline-danger btn-sm btn-hapus-baris" title="Hapus obat ini">
+                    &times; Hapus
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tombol Aksi Simpan Transaksi -->
+        <div class="form-actions" style="margin-top: 30px;">
+          <button type="submit" class="btn btn-success" style="padding: 10px 24px; font-size: 15px;">
+            💾 Simpan Pemeriksaan, Resep & Selesaikan Kunjungan
+          </button>
+          <a href="/pemeriksaan" class="btn btn-outline">Batal</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

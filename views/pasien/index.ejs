@@ -1,0 +1,104 @@
+<%- include('../partials/header') %>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>👥 Data Pasien Klinik</span>
+    </div>
+    <% if (currentUser.role === 'petugas' || currentUser.role === 'admin') { %>
+      <a href="/pasien/tambah" class="btn btn-primary">
+        + Pendaftaran Pasien Baru
+      </a>
+    <% } %>
+  </div>
+
+  <div class="card-body">
+    <!-- Filter Pencarian -->
+    <div class="filter-bar">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchPasien" 
+          class="form-control search-input" 
+          placeholder="Cari berdasarkan Nama, No. RM, atau NIK..." 
+          data-table-filter="pasienTable"
+          value="<%= searchQuery || '' %>"
+        >
+      </div>
+      <% if (searchQuery) { %>
+        <a href="/pasien" class="btn btn-outline">Reset Filter</a>
+      <% } %>
+    </div>
+
+    <!-- Tabel Pasien -->
+    <div class="table-responsive">
+      <table class="data-table" id="pasienTable">
+        <thead>
+          <tr>
+            <th>No. RM</th>
+            <th>Nama Lengkap</th>
+            <th>NIK</th>
+            <th>L/P</th>
+            <th>Tgl Lahir</th>
+            <th>No. HP</th>
+            <th>Alamat</th>
+            <th class="text-center" style="min-width: 180px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (pasienList && pasienList.length > 0) { %>
+            <% pasienList.forEach(p => { %>
+              <tr>
+                <td><strong><%= p.no_rm %></strong></td>
+                <td>
+                  <a href="/pasien/<%= p.id %>" style="font-weight: 600; color: var(--primary); text-decoration: none;">
+                    <%= p.nama %>
+                  </a>
+                </td>
+                <td><code><%= p.nik %></code></td>
+                <td><%= p.jenis_kelamin === 'Laki-laki' ? 'L' : 'P' %></td>
+                <td>
+                  <%= p.tgl_lahir instanceof Date ? p.tgl_lahir.toLocaleDateString('id-ID') : p.tgl_lahir %>
+                </td>
+                <td><%= p.no_hp %></td>
+                <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<%= p.alamat %>">
+                  <%= p.alamat %>
+                </td>
+                <td class="text-center">
+                  <div style="display: inline-flex; gap: 4px;">
+                    <a href="/pasien/<%= p.id %>" class="btn btn-outline btn-sm" title="Lihat Rekam Medis">
+                      Riwayat
+                    </a>
+
+                    <% if (currentUser.role === 'petugas' || currentUser.role === 'admin') { %>
+                      <a href="/kunjungan/tambah?pasien_id=<%= p.id %>" class="btn btn-success btn-sm" title="Daftarkan Kunjungan">
+                        + Kunjungan
+                      </a>
+                      <a href="/pasien/<%= p.id %>/edit" class="btn btn-warning btn-sm" title="Ubah Data">
+                        Ubah
+                      </a>
+                      <form action="/pasien/<%= p.id %>/hapus" method="POST" style="display: inline;" data-confirm="Apakah Anda yakin ingin menghapus pasien <%= p.nama %>? Seluruh data rekam medis pasien ini juga akan dihapus!">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus Pasien">
+                          Hapus
+                        </button>
+                      </form>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr class="no-filter">
+              <td colspan="8" class="text-center" style="padding: 30px; color: var(--text-muted);">
+                Belum ada data pasien yang terdaftar.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Circle -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#5a5a5a" stroke-width="18"/>
+  
+  <!-- Inner Circle Background -->
+  <circle cx="100" cy="100" r="75" fill="#ffffff"/>
+  
+  <!-- Medical Cross - Blue -->
+  <g>
+    <!-- Vertical bar -->
+    <rect x="80" y="50" width="40" height="100" fill="#1e88e5"/>
+    <!-- Horizontal bar -->
+    <rect x="50" y="80" width="100" height="40" fill="#1e88e5"/>
+  </g>
+  
+  <!-- Heartbeat line - White -->
+  <polyline
+    points="50,100 60,100 65,85 70,115 75,100 85,100 90,95 95,105 100,100 105,100 110,90 115,110 120,100 130,100 140,100"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

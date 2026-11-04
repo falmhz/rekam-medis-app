@@ -1,0 +1,195 @@
+<%- include('../partials/header') %>
+
+<!-- Header Profil Pasien -->
+<div class="patient-header-card">
+  <div style="flex: 1;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+      <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main);">
+        <%= pasien.nama %>
+      </h2>
+      <span class="badge" style="background-color: var(--primary-light); color: var(--primary-dark); font-size: 13px; font-weight: 700;">
+        <%= pasien.no_rm %>
+      </span>
+    </div>
+    
+    <div class="patient-info-meta">
+      <div class="meta-item">
+        <div class="meta-label">NIK</div>
+        <div class="meta-value"><code><%= pasien.nik %></code></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Jenis Kelamin</div>
+        <div class="meta-value"><%= pasien.jenis_kelamin %></div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Tanggal Lahir</div>
+        <div class="meta-value">
+          <%= pasien.tgl_lahir instanceof Date ? pasien.tgl_lahir.toLocaleDateString('id-ID') : pasien.tgl_lahir %>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Nomor Kontak</div>
+        <div class="meta-value"><%= pasien.no_hp %></div>
+      </div>
+      <div class="meta-item" style="grid-column: 1 / -1;">
+        <div class="meta-label">Alamat</div>
+        <div class="meta-value"><%= pasien.alamat %></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <% if (currentUser.role === 'petugas' || currentUser.role === 'admin') { %>
+      <a href="/kunjungan/tambah?pasien_id=<%= pasien.id %>" class="btn btn-primary">
+        + Buat Kunjungan Baru
+      </a>
+      <a href="/pasien/<%= pasien.id %>/edit" class="btn btn-warning">
+        ✏️ Ubah Data Pasien
+      </a>
+    <% } %>
+    <a href="/pasien" class="btn btn-outline">&larr; Daftar Pasien</a>
+  </div>
+</div>
+
+<!-- Riwayat Rekam Medis (Urut dari Terbaru) -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>📑 Riwayat Rekam Medis Pasien</span>
+    </div>
+    <span style="font-size: 13px; color: var(--text-muted);">
+      Total: <%= riwayat ? riwayat.length : 0 %> Kunjungan
+    </span>
+  </div>
+
+  <div class="card-body">
+    <% if (riwayat && riwayat.length > 0) { %>
+      <div class="timeline">
+        <% riwayat.forEach(item => { %>
+          <div class="timeline-item">
+            <div class="timeline-card">
+              <!-- Header Kunjungan -->
+              <div class="timeline-card-header">
+                <div>
+                  <strong style="font-size: 15px; color: var(--text-main);">
+                    <%= item.tanggal instanceof Date ? item.tanggal.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : item.tanggal %>
+                  </strong>
+                  <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
+                    Dokter Pemeriksa: <strong><%= item.nama_dokter || 'Belum Ditentukan' %></strong>
+                  </div>
+                </div>
+                <div>
+                  <span class="badge badge-<%= item.status.toLowerCase() %>">
+                    <%= item.status %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Keluhan Pasien -->
+              <div style="margin-bottom: 14px;">
+                <span style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase;">Keluhan Utama:</span>
+                <p style="font-size: 14px; color: var(--text-main); margin-top: 3px; font-style: italic;">
+                  "<%= item.keluhan %>"
+                </p>
+              </div>
+
+              <!-- Jika Ada Rekam Medis -->
+              <% if (item.rekam_medis_id) { %>
+                <!-- Tanda-tanda Vital -->
+                <div class="vitals-grid">
+                  <div class="vital-box">
+                    <div class="vital-label">Tekanan Darah</div>
+                    <div class="vital-val"><%= item.tekanan_darah %> mmHg</div>
+                  </div>
+                  <div class="vital-box">
+                    <div class="vital-label">Suhu Tubuh</div>
+                    <div class="vital-val"><%= item.suhu %> &deg;C</div>
+                  </div>
+                  <div class="vital-box">
+                    <div class="vital-label">Berat Badan</div>
+                    <div class="vital-val"><%= item.berat_badan %> kg</div>
+                  </div>
+                </div>
+
+                <!-- Diagnosis & Tindakan -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 14px;">
+                  <div style="background-color: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--primary);">
+                    <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Diagnosis Medis:</div>
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text-main); margin-top: 4px;">
+                      <%= item.diagnosis %>
+                    </div>
+                  </div>
+                  <div style="background-color: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border-left: 3px solid var(--secondary);">
+                    <div style="font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Tindakan / Terapi:</div>
+                    <div style="font-size: 14px; color: var(--text-main); margin-top: 4px;">
+                      <%= item.tindakan %>
+                    </div>
+                  </div>
+                </div>
+
+                <% if (item.catatan) { %>
+                  <div style="font-size: 13px; color: #475569; margin-bottom: 14px;">
+                    <strong>Catatan Dokter:</strong> <%= item.catatan %>
+                  </div>
+                <% } %>
+
+                <!-- Resep Obat yang Diberikan -->
+                <% if (item.resep && item.resep.length > 0) { %>
+                  <div style="margin-top: 10px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 6px;">
+                      💊 Resep Obat yang Diberikan:
+                    </div>
+                    <table class="prescription-table">
+                      <thead>
+                        <tr>
+                          <th>Nama Obat</th>
+                          <th style="width: 120px;" class="text-center">Jumlah</th>
+                          <th>Aturan Pakai</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% item.resep.forEach(r => { %>
+                          <tr>
+                            <td><strong><%= r.nama_obat %></strong></td>
+                            <td class="text-center"><%= r.jumlah %> <%= r.satuan %></td>
+                            <td><%= r.aturan_pakai %></td>
+                          </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% } else { %>
+                  <p style="font-size: 12.5px; color: var(--text-muted); font-style: italic;">
+                    Tidak ada resep obat pada kunjungan ini.
+                  </p>
+                <% } %>
+
+              <% } else { %>
+                <!-- Belum ada rekam medis (Status Menunggu / Diperiksa) -->
+                <div style="padding: 12px; background-color: var(--warning-light); border-radius: var(--radius-sm); color: #92400e; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Pasien masih dalam antrean (Status: <strong><%= item.status %></strong>). Rekam medis belum diisi dokter.</span>
+                  <% if (currentUser.role === 'dokter') { %>
+                    <a href="/pemeriksaan/<%= item.kunjungan_id %>" class="btn btn-primary btn-sm">
+                      🩺 Periksa Sekarang
+                    </a>
+                  <% } %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        <p style="font-size: 15px;">Belum ada riwayat kunjungan maupun rekam medis untuk pasien ini.</p>
+        <% if (currentUser.role === 'petugas' || currentUser.role === 'admin') { %>
+          <a href="/kunjungan/tambah?pasien_id=<%= pasien.id %>" class="btn btn-primary" style="margin-top: 12px;">
+            + Buat Kunjungan Pertama
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

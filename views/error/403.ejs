@@ -1,0 +1,15 @@
+<%- include('../partials/header') %>
+
+<div class="error-container">
+  <div class="error-code" style="color: var(--danger);">403</div>
+  <h2 class="error-title">Akses Ditolak (Forbidden)</h2>
+  <p class="error-desc">
+    <%= typeof message !== 'undefined' ? message : 'Maaf, akun Anda tidak memiliki izin untuk mengakses halaman ini.' %>
+  </p>
+  <div style="display: flex; justify-content: center; gap: 12px;">
+    <a href="/dashboard" class="btn btn-primary">Kembali ke Dashboard</a>
+    <a href="javascript:history.back()" class="btn btn-outline">&larr; Halaman Sebelumnya</a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

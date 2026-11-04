@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+
+<div class="card" style="max-width: 650px; margin: 0 auto;">
+  <div class="card-header">
+    <div class="card-title">
+      <span><%= isEdit ? '✏️ Ubah Data Obat' : '➕ Tambah Data Obat Baru' %></span>
+    </div>
+    <a href="/obat" class="btn btn-outline btn-sm">&larr; Kembali ke Daftar Obat</a>
+  </div>
+
+  <div class="card-body">
+    <form action="<%= isEdit ? '/obat/' + obat.id + '/edit' : '/obat/tambah' %>" method="POST">
+      
+      <!-- Nama Obat -->
+      <div class="form-group">
+        <label for="nama_obat" class="form-label">Nama Obat & Dosis <span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="nama_obat" 
+          name="nama_obat" 
+          class="form-control" 
+          placeholder="Contoh: Paracetamol 500mg" 
+          value="<%= obat.nama_obat %>" 
+          required 
+          autofocus
+        >
+      </div>
+
+      <div class="form-row">
+        <!-- Jumlah Stok -->
+        <div class="form-group">
+          <label for="stok" class="form-label">Jumlah Stok <span class="required">*</span></label>
+          <input 
+            type="number" 
+            id="stok" 
+            name="stok" 
+            class="form-control" 
+            min="0" 
+            value="<%= obat.stok %>" 
+            required
+          >
+          <span class="form-help">Stok di bawah 10 akan otomatis ditandai peringatan.</span>
+        </div>
+
+        <!-- Satuan Obat -->
+        <div class="form-group">
+          <label for="satuan" class="form-label">Satuan <span class="required">*</span></label>
+          <select id="satuan" name="satuan" class="form-control" required>
+            <option value="Tablet" <%= obat.satuan === 'Tablet' ? 'selected' : '' %>>Tablet</option>
+            <option value="Kapsul" <%= obat.satuan === 'Kapsul' ? 'selected' : '' %>>Kapsul</option>
+            <option value="Botol" <%= obat.satuan === 'Botol' ? 'selected' : '' %>>Botol</option>
+            <option value="Strip" <%= obat.satuan === 'Strip' ? 'selected' : '' %>>Strip</option>
+            <option value="Tube" <%= obat.satuan === 'Tube' ? 'selected' : '' %>>Tube</option>
+            <option value="Sachet" <%= obat.satuan === 'Sachet' ? 'selected' : '' %>>Sachet</option>
+            <option value="Ampul" <%= obat.satuan === 'Ampul' ? 'selected' : '' %>>Ampul</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <%= isEdit ? '💾 Simpan Perubahan Obat' : '✅ Tambahkan Obat Baru' %>
+        </button>
+        <a href="/obat" class="btn btn-outline">Batal</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

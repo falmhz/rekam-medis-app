@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>🩺 Antrean Pemeriksaan Pasien Anda</span>
+    </div>
+    <span style="font-size: 13px; color: var(--text-muted);">
+      Dokter: <strong><%= currentUser.nama %></strong>
+    </span>
+  </div>
+
+  <div class="card-body">
+    <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
+      Berikut adalah daftar pasien yang terdaftar untuk diperiksa oleh Anda hari ini dengan status <strong>Menunggu</strong> atau <strong>Sedang Diperiksa</strong>. Klik tombol <strong>Periksa</strong> untuk membuka formulir pemeriksaan medis.
+    </p>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>No. RM</th>
+            <th>Nama Pasien</th>
+            <th>L/P</th>
+            <th>Tanggal Kunjungan</th>
+            <th>Keluhan Utama</th>
+            <th class="text-center">Status</th>
+            <th class="text-center" style="min-width: 140px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (antreanList && antreanList.length > 0) { %>
+            <% antreanList.forEach(k => { %>
+              <tr class="<%= k.status === 'Diperiksa' ? 'row-danger' : '' %>">
+                <td><strong><%= k.no_rm %></strong></td>
+                <td>
+                  <strong style="color: var(--primary);"><%= k.nama_pasien %></strong>
+                </td>
+                <td><%= k.jenis_kelamin === 'Laki-laki' ? 'L' : 'P' %></td>
+                <td>
+                  <%= k.tanggal instanceof Date ? k.tanggal.toLocaleDateString('id-ID') : k.tanggal %>
+                </td>
+                <td style="max-width: 280px;"><%= k.keluhan %></td>
+                <td class="text-center">
+                  <span class="badge badge-<%= k.status.toLowerCase() %>">
+                    <%= k.status %>
+                  </span>
+                </td>
+                <td class="text-center">
+                  <a href="/pemeriksaan/<%= k.id %>" class="btn btn-primary btn-sm">
+                    🩺 <%= k.status === 'Diperiksa' ? 'Lanjutkan Periksa' : 'Periksa' %>
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" class="text-center" style="padding: 40px; color: var(--text-muted);">
+                🎉 Saat ini tidak ada antrean pasien yang menunggu untuk diperiksa.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

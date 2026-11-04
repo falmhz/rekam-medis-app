@@ -1,0 +1,148 @@
+<%- include('../partials/header') %>
+
+<!-- Header Sambutan Dashboard -->
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <div>
+    <h2 style="font-size: 20px; font-weight: 700; color: var(--text-main);">
+      Selamat Datang, <%= currentUser.nama %>!
+    </h2>
+    <p style="font-size: 13.5px; color: var(--text-muted); margin-top: 2px;">
+      Ringkasan operasional klinik hari ini (<%= new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>).
+    </p>
+  </div>
+  <div>
+    <% if (currentUser.role === 'petugas' || currentUser.role === 'admin') { %>
+      <a href="/kunjungan/tambah" class="btn btn-primary">
+        + Buat Kunjungan Baru
+      </a>
+      <a href="/pasien/tambah" class="btn btn-outline" style="margin-left: 6px;">
+        + Pasien Baru
+      </a>
+    <% } else if (currentUser.role === 'dokter') { %>
+      <a href="/pemeriksaan" class="btn btn-primary">
+        🩺 Mulai Periksa Pasien (<%= stats.antreanDokterHariIni %>)
+      </a>
+    <% } %>
+  </div>
+</div>
+
+<!-- Kartu Ringkasan Statistik -->
+<div class="stats-grid">
+  <!-- Total Pasien -->
+  <div class="stat-card">
+    <div class="stat-icon primary">👥</div>
+    <div class="stat-info">
+      <h3><%= stats.totalPasien %></h3>
+      <p>Total Pasien Terdaftar</p>
+    </div>
+  </div>
+
+  <!-- Kunjungan Hari Ini -->
+  <div class="stat-card">
+    <div class="stat-icon info">📋</div>
+    <div class="stat-info">
+      <h3><%= stats.kunjunganHariIni %></h3>
+      <p>Kunjungan Hari Ini</p>
+    </div>
+  </div>
+
+  <!-- Menunggu Pemeriksaan -->
+  <div class="stat-card">
+    <div class="stat-icon warning">⏳</div>
+    <div class="stat-info">
+      <h3><%= stats.antreanMenunggu %></h3>
+      <p>Antrean Menunggu</p>
+    </div>
+  </div>
+
+  <!-- Sedang Diperiksa -->
+  <div class="stat-card">
+    <div class="stat-icon info">🩺</div>
+    <div class="stat-info">
+      <h3><%= stats.antreanDiperiksa %></h3>
+      <p>Sedang Diperiksa</p>
+    </div>
+  </div>
+
+  <!-- Selesai Diperiksa -->
+  <div class="stat-card">
+    <div class="stat-icon success">✅</div>
+    <div class="stat-info">
+      <h3><%= stats.kunjunganSelesai %></h3>
+      <p>Selesai Diperiksa</p>
+    </div>
+  </div>
+
+  <!-- Obat Stok Menipis -->
+  <div class="stat-card">
+    <div class="stat-icon <%= stats.obatMenipis > 0 ? 'danger' : 'success' %>">💊</div>
+    <div class="stat-info">
+      <h3><%= stats.obatMenipis %></h3>
+      <p>Obat Stok Menipis (&lt; 10)</p>
+    </div>
+  </div>
+</div>
+
+<!-- Tabel Antrean Kunjungan Hari Ini -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>🏥 Antrean Pasien Hari Ini</span>
+    </div>
+    <a href="/kunjungan" class="btn btn-outline btn-sm">
+      Lihat Semua Antrean &rarr;
+    </a>
+  </div>
+  <div class="card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>No. RM</th>
+            <th>Nama Pasien</th>
+            <th>Dokter Pemeriksa</th>
+            <th>Keluhan Utama</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (antreanTerbaru && antreanTerbaru.length > 0) { %>
+            <% antreanTerbaru.forEach(k => { %>
+              <tr>
+                <td><strong><%= k.no_rm %></strong></td>
+                <td><%= k.nama_pasien %></td>
+                <td><%= k.nama_dokter %></td>
+                <td><%= k.keluhan %></td>
+                <td class="text-center">
+                  <span class="badge badge-<%= k.status.toLowerCase() %>">
+                    <%= k.status %>
+                  </span>
+                </td>
+                <td class="text-center">
+                  <% if (currentUser.role === 'dokter' && (k.status === 'Menunggu' || k.status === 'Diperiksa')) { %>
+                    <a href="/pemeriksaan/<%= k.id %>" class="btn btn-primary btn-sm">
+                      🩺 Periksa
+                    </a>
+                  <% } else { %>
+                    <a href="/pemeriksaan/<%= k.id %>" class="btn btn-outline btn-sm">
+                      Detail
+                    </a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr class="no-filter">
+              <td colspan="6" class="text-center" style="padding: 30px; color: var(--text-muted);">
+                Belum ada antrean kunjungan untuk hari ini.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

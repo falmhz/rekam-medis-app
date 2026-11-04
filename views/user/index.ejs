@@ -1,0 +1,101 @@
+<%- include('../partials/header') %>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>👤 Manajemen Pengguna Sistem</span>
+    </div>
+    <a href="/user/tambah" class="btn btn-primary">
+      + Tambah Pengguna Baru
+    </a>
+  </div>
+
+  <div class="card-body">
+    <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 18px;">
+      Kelola akun pengguna klinik untuk peran <strong>Dokter</strong>, <strong>Petugas Pendaftaran</strong>, dan <strong>Administrator</strong>. Kata sandi dienkripsi dengan aman menggunakan algoritma bcrypt.
+    </p>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">ID</th>
+            <th>Nama Lengkap</th>
+            <th>Username</th>
+            <th>Peran (Role)</th>
+            <th>Terdaftar Sejak</th>
+            <th class="text-center" style="min-width: 260px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (userList && userList.length > 0) { %>
+            <% userList.forEach(u => { %>
+              <tr>
+                <td><%= u.id %></td>
+                <td>
+                  <strong><%= u.nama %></strong>
+                  <% if (u.id === currentUser.id) { %>
+                    <span style="font-size: 11px; color: var(--primary); font-weight: 700;">(Akun Anda)</span>
+                  <% } %>
+                </td>
+                <td><code><%= u.username %></code></td>
+                <td>
+                  <span class="user-role-tag role-<%= u.role %>">
+                    <%= u.role %>
+                  </span>
+                </td>
+                <td>
+                  <%= u.created_at instanceof Date ? u.created_at.toLocaleDateString('id-ID') : u.created_at %>
+                </td>
+                <td class="text-center">
+                  <div style="display: inline-flex; gap: 6px; align-items: center;">
+                    <!-- Edit -->
+                    <a href="/user/<%= u.id %>/edit" class="btn btn-warning btn-sm" title="Ubah Nama/Role">
+                      Ubah
+                    </a>
+
+                    <!-- Reset Password Form -->
+                    <form action="/user/<%= u.id %>/reset-password" method="POST" style="display: inline;" onsubmit="return handleResetPassword(event, '<%= u.nama %>')">
+                      <input type="hidden" name="new_password" class="reset-pass-field">
+                      <button type="submit" class="btn btn-outline btn-sm" title="Reset Kata Sandi">
+                        Reset Sandi
+                      </button>
+                    </form>
+
+                    <!-- Hapus (kecuali akun sendiri) -->
+                    <% if (u.id !== currentUser.id) { %>
+                      <form action="/user/<%= u.id %>/hapus" method="POST" style="display: inline;" data-confirm="Apakah Anda yakin ingin menghapus pengguna '<%= u.nama %>'?">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Hapus Pengguna">
+                          Hapus
+                        </button>
+                      </form>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function handleResetPassword(event, nama) {
+    const newPass = prompt('Masukkan kata sandi baru untuk "' + nama + '" (minimal 6 karakter):');
+    if (newPass === null) {
+      return false; // Dibatalkan
+    }
+    if (newPass.trim().length < 6) {
+      alert('Kata sandi baru minimal 6 karakter!');
+      return false;
+    }
+    const form = event.target;
+    form.querySelector('.reset-pass-field').value = newPass.trim();
+    return true;
+  }
+</script>
+
+<%- include('../partials/footer') %>

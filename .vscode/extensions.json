@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "DigitalBrainstem.javascript-ejs-support",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ckolkman.vscode-postgres"
+  ]
+}

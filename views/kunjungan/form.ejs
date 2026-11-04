@@ -1,0 +1,84 @@
+<%- include('../partials/header') %>
+
+<div class="card" style="max-width: 750px; margin: 0 auto;">
+  <div class="card-header">
+    <div class="card-title">
+      <span>📝 Pendaftaran Kunjungan Pasien</span>
+    </div>
+    <a href="/kunjungan" class="btn btn-outline btn-sm">&larr; Kembali ke Antrean</a>
+  </div>
+
+  <div class="card-body">
+    <form action="/kunjungan/tambah" method="POST">
+      
+      <!-- Pilih Pasien -->
+      <div class="form-group">
+        <label for="pasien_id" class="form-label">Pilih Pasien <span class="required">*</span></label>
+        <select name="pasien_id" id="pasien_id" class="form-control" required>
+          <option value="">-- Pilih Pasien Terdaftar --</option>
+          <% if (pasienList && pasienList.length > 0) { %>
+            <% pasienList.forEach(p => { %>
+              <option value="<%= p.id %>" <%= selectedPasienId === p.id ? 'selected' : '' %>>
+                [<%= p.no_rm %>] <%= p.nama %>
+              </option>
+            <% }) %>
+          <% } %>
+        </select>
+        <span class="form-help">
+          Pasien belum terdaftar? <a href="/pasien/tambah" style="color: var(--primary); font-weight: 600;">Daftarkan pasien baru di sini</a>.
+        </span>
+      </div>
+
+      <div class="form-row">
+        <!-- Dokter Pemeriksa -->
+        <div class="form-group">
+          <label for="dokter_id" class="form-label">Dokter Pemeriksa <span class="required">*</span></label>
+          <select name="dokter_id" id="dokter_id" class="form-control" required>
+            <option value="">-- Pilih Dokter --</option>
+            <% if (dokterList && dokterList.length > 0) { %>
+              <% dokterList.forEach(d => { %>
+                <option value="<%= d.id %>"><%= d.nama %></option>
+              <% }) %>
+            <% } %>
+          </select>
+        </div>
+
+        <!-- Tanggal Kunjungan -->
+        <div class="form-group">
+          <label for="tanggal" class="form-label">Tanggal Kunjungan <span class="required">*</span></label>
+          <input 
+            type="date" 
+            name="tanggal" 
+            id="tanggal" 
+            class="form-control" 
+            value="<%= today %>" 
+            required
+          >
+        </div>
+      </div>
+
+      <!-- Keluhan Pasien -->
+      <div class="form-group">
+        <label for="keluhan" class="form-label">Keluhan Utama Pasien <span class="required">*</span></label>
+        <textarea 
+          name="keluhan" 
+          id="keluhan" 
+          class="form-control" 
+          rows="3" 
+          placeholder="Jelaskan gejala atau alasan pasien berobat, misal: Demam tinggi 3 hari, batuk pilek..." 
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          ✅ Simpan Kunjungan & Masukkan ke Antrean
+        </button>
+        <a href="/kunjungan" class="btn btn-outline">Batal</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <span>💊 Manajemen Data Obat Klinik</span>
+    </div>
+    <a href="/obat/tambah" class="btn btn-primary">
+      + Tambah Obat Baru
+    </a>
+  </div>
+
+  <div class="card-body">
+    <!-- Filter Pencarian -->
+    <div class="filter-bar">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          class="form-control search-input" 
+          placeholder="Cari nama obat..." 
+          data-table-filter="obatTable"
+          value="<%= searchQuery || '' %>"
+        >
+      </div>
+      <% if (searchQuery) { %>
+        <a href="/obat" class="btn btn-outline">Reset Filter</a>
+      <% } %>
+    </div>
+
+    <!-- Tabel Data Obat -->
+    <div class="table-responsive">
+      <table class="data-table" id="obatTable">
+        <thead>
+          <tr>
+            <th style="width: 60px;">No</th>
+            <th>Nama Obat</th>
+            <th class="text-center" style="width: 140px;">Sisa Stok</th>
+            <th>Satuan</th>
+            <th class="text-center" style="width: 160px;">Status Stok</th>
+            <th class="text-center" style="width: 160px;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (obatList && obatList.length > 0) { %>
+            <% obatList.forEach((o, index) => { %>
+              <tr class="<%= o.stok < 10 ? 'row-danger' : '' %>">
+                <td><%= index + 1 %></td>
+                <td>
+                  <strong><%= o.nama_obat %></strong>
+                </td>
+                <td class="text-center" style="font-size: 15px; font-weight: 700;">
+                  <%= o.stok %>
+                </td>
+                <td><%= o.satuan %></td>
+                <td class="text-center">
+                  <% if (o.stok <= 0) { %>
+                    <span class="badge badge-stok-menipis" style="background-color: #fee2e2; color: #991b1b;">
+                      HABIS (0)
+                    </span>
+                  <% } else if (o.stok < 10) { %>
+                    <span class="badge badge-stok-menipis">
+                      ⚠️ Menipis (&lt; 10)
+                    </span>
+                  <% } else { %>
+                    <span class="badge badge-stok-aman">
+                      Aman (&ge; 10)
+                    </span>
+                  <% } %>
+                </td>
+                <td class="text-center">
+                  <div style="display: inline-flex; gap: 6px;">
+                    <a href="/obat/<%= o.id %>/edit" class="btn btn-warning btn-sm" title="Ubah Obat">
+                      Ubah
+                    </a>
+                    <form action="/obat/<%= o.id %>/hapus" method="POST" style="display: inline;" data-confirm="Apakah Anda yakin ingin menghapus obat <%= o.nama_obat %>?">
+                      <button type="submit" class="btn btn-danger btn-sm" title="Hapus Obat">
+                        Hapus
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr class="no-filter">
+              <td colspan="6" class="text-center" style="padding: 30px; color: var(--text-muted);">
+                Belum ada data obat yang terdaftar.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

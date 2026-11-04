@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title ? title + ' - Sistem Rekam Medis' : 'Sistem Rekam Medis Klinik' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Sidebar Navigasi -->
+    <%- include('sidebar') %>
+
+    <!-- Wrapper Konten Utama -->
+    <div class="main-wrapper">
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobileToggle" type="button" title="Menu Navigasi">
+            ☰
+          </button>
+          <h1 class="page-title"><%= title || 'Klinik Medika Sehat' %></h1>
+        </div>
+        <div class="topbar-right">
+          <% if (currentUser) { %>
+            <div style="font-size: 13px; color: var(--text-muted); text-align: right;">
+              <div>Halo, <strong><%= currentUser.nama %></strong></div>
+              <span class="user-role-tag role-<%= currentUser.role %>"><%= currentUser.role %></span>
+            </div>
+            <a href="/auth/logout" class="btn btn-outline-danger btn-sm" title="Keluar dari sistem">
+              Keluar
+            </a>
+          <% } %>
+        </div>
+      </header>
+
+      <!-- Area Isi Halaman -->
+      <main class="content-body">
+        <!-- Flash Alert Notifikasi -->
+        <% if (flash && flash.message) { %>
+          <div class="alert alert-<%= flash.type || 'info' %>">
+            <span><%= flash.message %></span>
+            <button type="button" class="alert-close" aria-label="Tutup">&times;</button>
+          </div>
+        <% } %>

@@ -1,0 +1,84 @@
+<!-- Sidebar Navigasi Kiri -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="brand-icon">+</div>
+    <div class="brand-text">
+      <h2>MedikaSehat</h2>
+      <span>REKAM MEDIS KLINIK</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Menu Utama</div>
+    <a href="/dashboard" class="nav-item <%= currentPath === '/dashboard' || currentPath === '/' ? 'active' : '' %>">
+      <span class="nav-icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+
+    <!-- Menu Khusus Dokter -->
+    <% if (currentUser && currentUser.role === 'dokter') { %>
+      <div class="nav-section-title">Pelayanan Medis</div>
+      <a href="/pemeriksaan" class="nav-item <%= currentPath.startsWith('/pemeriksaan') ? 'active' : '' %>">
+        <span class="nav-icon">🩺</span>
+        <span>Pemeriksaan Pasien</span>
+      </a>
+      <a href="/kunjungan" class="nav-item <%= currentPath === '/kunjungan' ? 'active' : '' %>">
+        <span class="nav-icon">📋</span>
+        <span>Antrean Kunjungan</span>
+      </a>
+      <a href="/pasien" class="nav-item <%= currentPath.startsWith('/pasien') ? 'active' : '' %>">
+        <span class="nav-icon">👥</span>
+        <span>Riwayat Pasien</span>
+      </a>
+    <% } %>
+
+    <!-- Menu Petugas Pendaftaran & Admin -->
+    <% if (currentUser && (currentUser.role === 'petugas' || currentUser.role === 'admin')) { %>
+      <div class="nav-section-title">Pendaftaran & Pasien</div>
+      <a href="/pasien" class="nav-item <%= currentPath === '/pasien' ? 'active' : '' %>">
+        <span class="nav-icon">👥</span>
+        <span>Data Pasien</span>
+      </a>
+      <a href="/pasien/tambah" class="nav-item <%= currentPath === '/pasien/tambah' ? 'active' : '' %>">
+        <span class="nav-icon">➕</span>
+        <span>Daftar Pasien Baru</span>
+      </a>
+      <a href="/kunjungan" class="nav-item <%= currentPath === '/kunjungan' ? 'active' : '' %>">
+        <span class="nav-icon">📋</span>
+        <span>Antrean Kunjungan</span>
+      </a>
+      <a href="/kunjungan/tambah" class="nav-item <%= currentPath === '/kunjungan/tambah' ? 'active' : '' %>">
+        <span class="nav-icon">📝</span>
+        <span>Daftar Kunjungan</span>
+      </a>
+    <% } %>
+
+    <!-- Menu Khusus Admin -->
+    <% if (currentUser && currentUser.role === 'admin') { %>
+      <div class="nav-section-title">Administrasi Sistem</div>
+      <a href="/obat" class="nav-item <%= currentPath.startsWith('/obat') ? 'active' : '' %>">
+        <span class="nav-icon">💊</span>
+        <span>Kelola Obat</span>
+      </a>
+      <a href="/user" class="nav-item <%= currentPath.startsWith('/user') ? 'active' : '' %>">
+        <span class="nav-icon">👤</span>
+        <span>Kelola Pengguna</span>
+      </a>
+    <% } %>
+  </nav>
+
+  <!-- Profil Pengguna di Bagian Bawah Sidebar -->
+  <div class="sidebar-footer">
+    <% if (currentUser) { %>
+      <div class="user-profile-badge">
+        <div class="avatar-circle">
+          <%= currentUser.nama ? currentUser.nama.charAt(0).toUpperCase() : 'U' %>
+        </div>
+        <div class="user-info">
+          <div class="user-name" title="<%= currentUser.nama %>"><%= currentUser.nama %></div>
+          <span class="user-role-tag role-<%= currentUser.role %>"><%= currentUser.role %></span>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</aside>

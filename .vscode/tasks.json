@@ -1,0 +1,71 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "1. Pasang Dependensi (npm install)",
+      "type": "shell",
+      "command": "npm.cmd install",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "2. Setup Database & Seeding (npm run setup)",
+      "type": "shell",
+      "command": "npm.cmd run setup",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "3. Jalankan Aplikasi (npm start)",
+      "type": "shell",
+      "command": "npm.cmd start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "4. Jalankan Mode Dev (npm run dev)",
+      "type": "shell",
+      "command": "npm.cmd run dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "5. Jalankan Tes Otomatis (tests/test_app.js)",
+      "type": "shell",
+      "command": "node tests/test_app.js",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "6. Unggah ke GitHub (git push)",
+      "type": "shell",
+      "command": "git push -u origin main",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ]
+}

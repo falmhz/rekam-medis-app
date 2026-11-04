@@ -1,0 +1,15 @@
+<%- include('../partials/header') %>
+
+<div class="error-container">
+  <div class="error-code" style="color: var(--warning);">404</div>
+  <h2 class="error-title">Halaman Tidak Ditemukan</h2>
+  <p class="error-desc">
+    Tautan yang Anda tuju mungkin salah ketik, sudah dihapus, atau sedang tidak tersedia.
+  </p>
+  <div style="display: flex; justify-content: center; gap: 12px;">
+    <a href="/dashboard" class="btn btn-primary">Kembali ke Dashboard</a>
+    <a href="/pasien" class="btn btn-outline">Lihat Data Pasien</a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
