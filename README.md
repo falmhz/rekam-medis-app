@@ -354,23 +354,3 @@ Kami menerima kontribusi! Silakan:
 5. Buka Pull Request
 
 ---
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah **ISC License**. Lihat file `LICENSE` untuk detail.
-
----
-
-## Kontak & Support
-
-- **Author**: Falmhz
-- **Repository**: https://github.com/falmhz/rekam-medis-app
-- **Issues**: Silakan buat issue di GitHub untuk melaporkan bug atau request fitur
-
-
----
-Halaman login dengan branding Medika Sehat dan logo medis modern.
-
----
-
-**Made with ❤️ for healthcare management**
